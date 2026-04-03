@@ -135,12 +135,19 @@ async function send(){
       body: JSON.stringify({ message: q })
     });
 
-    const data = await res.json();
+    // 👇 IMPORTANT FIX
+    let data;
+    try {
+      data = await res.json();
+    } catch {
+      const text = await res.text();
+      throw new Error("Invalid JSON: " + text);
+    }
 
     hideTyping();
 
     if (!res.ok) {
-      addMsg('bot', '❌ Server error');
+      addMsg('bot', '❌ ' + (data.error || 'Server error'));
       return;
     }
 
@@ -148,7 +155,8 @@ async function send(){
 
   } catch (e) {
     hideTyping();
-    addMsg('bot', '❌ Network error');
+    console.error(e);
+    addMsg('bot', '❌ Error aa raha hai (console check karo)');
   }
 }
 const SYSTEM=`You are an expert Government Exam AI Tutor for India specializing in SSC CGL, CHSL, MTS, CPO, Banking (IBPS/SBI/RRB), and Railway exams.
