@@ -1,4 +1,8 @@
 export default async function handler(req, res) {
+  if (req.method !== "POST") {
+    return res.status(200).json({ message: "API working" });
+  }
+
   const { message } = req.body;
 
   try {
@@ -13,7 +17,7 @@ export default async function handler(req, res) {
         messages: [
           {
             role: "system",
-            content: "You are SSC exam AI tutor. Explain in Hinglish with shortcuts and step-by-step."
+            content: "You are SSC AI tutor. Explain in Hinglish with shortcuts."
           },
           {
             role: "user",
@@ -25,12 +29,12 @@ export default async function handler(req, res) {
 
     const data = await response.json();
 
-    res.status(200).json({
-      reply: data.choices[0].message.content
+    return res.status(200).json({
+      reply: data.choices?.[0]?.message?.content || "No response"
     });
 
   } catch (error) {
-    res.status(500).json({
+    return res.status(500).json({
       error: "Server error"
     });
   }
