@@ -118,21 +118,16 @@ header{background:var(--surface);border-bottom:1px solid var(--border);padding:0
 </div>
 <script>
 async function send(){
-  if(busy)return;
-  const q=inp.value.trim();
-  if(!q)return;
+  const q = document.getElementById("inp").value.trim();
+  if(!q) return;
 
-  inp.value='';
-  inp.style.height='auto';
-  busy=true;
-  document.getElementById('sbtn').disabled=true;
+  document.getElementById("inp").value = "";
 
-  addMsg('user',q);
-
+  addMsg('user', q);
   showTyping();
 
-  try{
-    const res = await fetch("/api/chat", {
+  try {
+    const res = await fetch(window.location.origin + "/api/chat", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
@@ -141,22 +136,19 @@ async function send(){
     });
 
     const data = await res.json();
+
     hideTyping();
 
-    if(data.error){
-      addMsg('bot','❌ Error: '+data.error);
+    if (!res.ok) {
+      addMsg('bot', '❌ Server error');
       return;
     }
 
     addMsg('bot', data.reply);
 
-  }catch(e){
+  } catch (e) {
     hideTyping();
-    addMsg('bot','❌ Network error! Dobara try karo.');
-  }finally{
-    busy=false;
-    document.getElementById('sbtn').disabled=false;
-    inp.focus();
+    addMsg('bot', '❌ Network error');
   }
 }
 const SYSTEM=`You are an expert Government Exam AI Tutor for India specializing in SSC CGL, CHSL, MTS, CPO, Banking (IBPS/SBI/RRB), and Railway exams.
