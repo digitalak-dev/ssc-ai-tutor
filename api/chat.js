@@ -25,6 +25,7 @@ export default async function handler(req, res) {
     if (!message) {
       return res.status(400).json({ error: "No message provided" });
     }
+    res.setHeader("Content-Type", "application/json");
 
     const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
       method: "POST",
